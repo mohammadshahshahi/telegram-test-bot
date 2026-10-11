@@ -1,0 +1,28 @@
+name: Start Telegram bot (5-minute test)
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  run-bot:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Check Python syntax
+        run: python -m py_compile main.py
+
+      - name: Run bot for up to 5 minutes
+        env:
+          BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
+        run: timeout --signal=INT 300s python -u main.py
